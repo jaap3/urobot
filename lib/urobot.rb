@@ -48,7 +48,7 @@ module Jaap3
 
     def browser?(user_agent)
       # Empty string might be an anonymized browser
-      return true if user_agent =~ /^\s*$/
+      return true if user_agent.nil? || user_agent =~ /^\s*$/
       ua_lc = user_agent.downcase
       if ua_lc[0,7] == "mozilla"
         is_browser = ua_lc =~ REGEXP[:moz_compatible] || ua_lc =~ REGEXP[:moz_platform]
