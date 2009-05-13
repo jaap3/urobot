@@ -1,7 +1,80 @@
-= urobot
+= Urobot
 
-Description goes here.
+Urobot gives a fairly accurate answer to the question if a user-agent string
+belongs to a (human) browser or a bot. It does so by examines a user-agent
+string to see if its looks like it belongs to a legitimate browser. If this
+is not the case Urobot assumes the user-agent string to belong to a bot. This
+also means that feedreaders, email clients, multimedia players, downloaders etc.
+are all identified as bots. The reason for this is that Urobots primary use is
+to distinguish between a human visitor and an automated process.
+
+Urobot takes a whitelist + blacklist approach to identifying bots. First it uses
+a whitelist to filter out any unknown ua string, it then uses a blacklist to
+filter out any known bot that pretends to be a legitimate browser.
+
+The white + blacklist approach makes Urobot fairly low maintenance but also
+vulnerable to false positives and negatives. It cannot distinguish bots that
+spoof their user-agent string to a perfectly valid one, neither can it
+correctly identify a browser that has it user-agent string modified to a
+nonsensical one.
+
+With that in mind, Urobot has been developed against a list of over 30000
+user-agent strings (rare browser, various permutations of known browsers, xss
+attacks, known bots etc.) based on the content provided by the following sites:
+* botsvsbrowsers.com
+* robotstxt.org
+* useragentstring.com
+* user-agents.org
+* user-agent-string.info
+* zytrax.com
+plus several additional strings pulled from my sites apache logs.
+
+So Urobot has been well tested and should be right in the majority of cases.
+Be aware that you should only use it in situations where false negatives and
+positives can be afforded.
+
+== Installation
+
+If you want to use the Rails 2.1 dependency manager add this environment.rb:
+
+  config.gem 'jaap3-urobot', :lib => 'urobot',
+    :source => 'http://gems.github.com'
+
+Then run the following command in your Rails application root:
+
+  rake gems:install
+
+Or use it as a plain plugin:
+
+  script/plugin install git://github.com/jaap3/urobot.git
+
+== Usage
+
+In a Rails application Urobot automatically extends ActionController::Base
+making the following instance methods available:
+
+  robot?(user_agent)
+  browser?(user_agent)
+
+It also adds a class method called urobot.
+
+So if you want to, for example, disable sessions for suspected bots you could
+add the following code to your controller:
+
+  session :disabled => true, :if => Proc.new do |request|
+    urobot.robot?(request.user_agent)
+  end
+
+If you want to be able to use the Urobot methods in your views you should call
+helper_method with the desired methods in your controller, like so:
+
+  helper_method :robot?, :browser?
+
+== Contributing
+
+If you would like to contribute to Urobot, just fork the code
+and send me a pull request after you are done fiddling.
 
 == Copyright
 
-Copyright (c) 2009 Jaap Roes. See LICENSE for details.
+Copyright (c) 2009 Jaap Roes, released under the MIT license
