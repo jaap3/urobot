@@ -39,7 +39,7 @@ module Jaap3
       :bot => /#{ID[:bot] * "|"}/ }
 
     # Log into it's own folder, disabled by default
-    LOGGER = Logger.new("log/urobot.log")
+    LOGGER = Logger.new(File.join(RAILS_ROOT, "log/urobot.log"))
     LOGGER_ENABLED = false
 
     def robot?(user_agent)
